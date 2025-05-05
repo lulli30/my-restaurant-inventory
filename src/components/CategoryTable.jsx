@@ -12,7 +12,7 @@ function CategoryTable() {
   }, []);
 
   const fetchCategories = async () => {
-    const response = await fetch("/api/categories");
+    const response = await fetch("http://localhost:5000/api/categories");
     const data = await response.json();
     setCategories(data);
   };
@@ -21,18 +21,29 @@ function CategoryTable() {
     e.preventDefault();
     if (!newCategory.trim()) return;
 
-    const response = await fetch("/api/categories", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ Category: newCategory }),
-    });
+    try {
+      const response = await fetch("http://localhost:5000/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ Category: newCategory }),
+      });
 
-    if (response.ok) {
-      setNewCategory("");
-      setShowModal(false);
-      fetchCategories(); // refresh list
-    } else {
-      alert("Failed to add category.");
+      // Check if the response is valid JSON
+      if (response.ok) {
+        const data = await response.json(); // Attempt to parse the JSON
+        console.log("Category added:", data);
+        setNewCategory("");
+        setShowModal(false);
+        fetchCategories();
+      } else {
+        // If the response is not OK, log the response text for debugging
+        const errorText = await response.text(); // Get the response as plain text
+        console.error("Failed to add category. Server response:", errorText);
+        alert("Failed to add category.");
+      }
+    } catch (error) {
+      console.error("Error in adding category:", error);
+      alert("Error in adding category.");
     }
   };
 

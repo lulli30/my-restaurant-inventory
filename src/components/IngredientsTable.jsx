@@ -16,31 +16,54 @@ function IngredientsTable() {
   }, []);
 
   const fetchIngredients = async () => {
-    const response = await fetch("/api/ingredients");
-    const data = await response.json();
-    setIngredients(data);
+    try {
+      const response = await fetch("http://localhost:5000/api/ingredients");
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setIngredients(data);
+    } catch (error) {
+      console.error("Failed to fetch ingredients:", error);
+    }
   };
 
   const handleAddIngredient = async (e) => {
     e.preventDefault();
-    if (!newIngredient.IngredientName.trim()) return;
 
-    const response = await fetch("/api/ingredients", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newIngredient),
-    });
+    // Validate the input
+    if (!newIngredient.IngredientName.trim()) {
+      alert("Ingredient Name is required.");
+      return;
+    }
 
-    if (response.ok) {
-      setNewIngredient({
-        IngredientName: "",
-        UnitOfMeasurement: "",
-        CategoryID: "",
+    if (!newIngredient.CategoryID || isNaN(newIngredient.CategoryID)) {
+      alert("Please enter a valid Category ID.");
+      return;
+    }
+
+    const ingredientToAdd = { ...newIngredient };
+
+    try {
+      const response = await fetch("http://localhost:5000/api/ingredients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ingredientToAdd),
       });
-      setShowModal(false);
-      fetchIngredients(); // refresh list
-    } else {
-      alert("Failed to add ingredient.");
+
+      if (response.ok) {
+        setNewIngredient({
+          IngredientName: "",
+          UnitOfMeasurement: "",
+          CategoryID: "",
+        });
+        setShowModal(false);
+        fetchIngredients(); // refresh list
+      } else {
+        alert("Failed to add ingredient.");
+      }
+    } catch (error) {
+      alert("Error adding ingredient: " + error.message);
     }
   };
 
