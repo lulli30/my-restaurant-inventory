@@ -216,6 +216,34 @@ app.post("/api/recipes", (req, res) => {
   });
 });
 
+// ===== Orders Route =====
+
+app.get("/api/orders", (req, res) => {
+  db.query("SELECT * FROM orders", (err, results) => {
+    if (err)
+      return res.status(500).json({ error: "Failed to fetch menu items" });
+    res.json(results);
+  });
+});
+
+app.post("/api/orders", (req, res) => {
+  const { MenuID, Quantity, TotalPrice } = req.body;
+
+  if (!MenuID || !Quantity || !TotalPrice) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  const sql =
+    "INSERT INTO orders (MenuID, Quantity, TotalPrice) VALUES (?, ?, ?)";
+  db.query(sql, [MenuID, Quantity, TotalPrice], (err, result) => {
+    if (err) {
+      console.error("Error inserting order:", err);
+      return res.status(500).json({ error: "Failed to insert order" });
+    }
+    res.status(201).json({ message: "Order added", id: result.insertId });
+  });
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

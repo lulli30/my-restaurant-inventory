@@ -7,7 +7,6 @@ function OrdersTable() {
     MenuID: "",
     Quantity: "",
     TotalPrice: "",
-    OrderDate: "",
   });
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
@@ -17,22 +16,16 @@ function OrdersTable() {
   }, []);
 
   const fetchOrders = async () => {
-    const response = await fetch("/api/orders");
+    const response = await fetch("http://localhost:5000/api/orders");
     const data = await response.json();
     setOrders(data);
   };
 
   const handleAddOrder = async (e) => {
     e.preventDefault();
-    if (
-      !newOrder.MenuID ||
-      !newOrder.Quantity ||
-      !newOrder.TotalPrice ||
-      !newOrder.OrderDate
-    )
-      return;
+    if (!newOrder.MenuID || !newOrder.Quantity || !newOrder.TotalPrice) return;
 
-    const response = await fetch("/api/orders", {
+    const response = await fetch("http://localhost:5000/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newOrder),
@@ -43,7 +36,6 @@ function OrdersTable() {
         MenuID: "",
         Quantity: "",
         TotalPrice: "",
-        OrderDate: "",
       });
       setShowModal(false);
       fetchOrders(); // refresh list
@@ -137,16 +129,7 @@ function OrdersTable() {
                   className="w-full border px-3 py-2 rounded"
                 />
               </div>
-              <div className="mb-4">
-                <input
-                  type="datetime-local"
-                  value={newOrder.OrderDate}
-                  onChange={(e) =>
-                    setNewOrder({ ...newOrder, OrderDate: e.target.value })
-                  }
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
+
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
