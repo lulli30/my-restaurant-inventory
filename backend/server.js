@@ -168,7 +168,6 @@ app.get("/api/menuitems", (req, res) => {
 app.post("/api/menuitems", (req, res) => {
   const { Menu, SellingPrice } = req.body;
 
-  // Fixed incorrect validation - was checking for ingredient fields
   if (!Menu || !SellingPrice) {
     return res
       .status(400)
@@ -182,6 +181,38 @@ app.post("/api/menuitems", (req, res) => {
       return res.status(500).json({ error: "Failed to insert menu item" });
     }
     res.status(201).json({ message: "Menu item added", id: result.insertId });
+  });
+});
+
+// ===== Recipes Routes =====
+
+// Fetch all recipes
+app.get("/api/recipes", (req, res) => {
+  db.query("SELECT * FROM recipes", (err, results) => {
+    if (err)
+      return res.status(500).json({ error: "Failed to fetch menu items" });
+    res.json(results);
+  });
+});
+
+// Add new recipe
+app.post("/api/recipes", (req, res) => {
+  const { MenuID, IngredientsID, Quantity } = req.body;
+
+  if (!MenuID || !IngredientsID || !Quantity) {
+    return res
+      .status(400)
+      .json({ error: "Menu id, IngredientsId and quantity are required" });
+  }
+
+  const sql =
+    "INSERT INTO recipes (MenuId, IngredientsID, Quantity) VALUES (?, ?, ?)";
+  db.query(sql, [MenuID, IngredientsID, Quantity], (err, result) => {
+    if (err) {
+      console.error("Error inserting menu item:", err);
+      return res.status(500).json({ error: "Failed to insert recipe" });
+    }
+    res.status(201).json({ message: "Recipe added", id: result.insertId });
   });
 });
 

@@ -16,7 +16,7 @@ function RecipesTable() {
   }, []);
 
   const fetchRecipes = async () => {
-    const response = await fetch("/api/recipes");
+    const response = await fetch("http://localhost:5000/api/recipes");
     const data = await response.json();
     setRecipes(data);
   };
@@ -26,7 +26,7 @@ function RecipesTable() {
     if (!newRecipe.MenuID || !newRecipe.IngredientsID || !newRecipe.Quantity)
       return;
 
-    const response = await fetch("/api/recipes", {
+    const response = await fetch("http://localhost:5000/api/recipes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newRecipe),
