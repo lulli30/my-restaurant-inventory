@@ -9,12 +9,11 @@ const port = 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// MySQL connection setup
 const db = mysql.createConnection({
   host: "localhost",
-  user: "root", // default XAMPP user
-  password: "", // leave blank if no password
-  database: "restaurant_inventory", // your database name
+  user: "root",
+  password: "",
+  database: "restaurant_inventory",
 });
 
 db.connect((err) => {
@@ -25,10 +24,13 @@ db.connect((err) => {
   }
 });
 
-// Fetch categories
+// ===== Category Routes =====
+
+// Fetch all categories
 app.get("/api/categories", (req, res) => {
   db.query("SELECT * FROM categories", (err, results) => {
-    if (err) return res.status(500).send(err);
+    if (err)
+      return res.status(500).json({ error: "Failed to fetch categories" });
     res.json(results);
   });
 });
@@ -36,6 +38,7 @@ app.get("/api/categories", (req, res) => {
 // Add new category
 app.post("/api/categories", (req, res) => {
   const { Category } = req.body;
+
   if (!Category) {
     return res.status(400).json({ error: "Category is required" });
   }
@@ -46,16 +49,17 @@ app.post("/api/categories", (req, res) => {
       console.error("Error inserting category:", err);
       return res.status(500).json({ error: "Failed to insert category" });
     }
-
-    // Ensure the response is JSON
     res.status(201).json({ message: "Category added", id: result.insertId });
   });
 });
 
-// Fetch ingredients
+// ===== Ingredient Routes =====
+
+// Fetch all ingredients
 app.get("/api/ingredients", (req, res) => {
   db.query("SELECT * FROM ingredients", (err, results) => {
-    if (err) return res.status(500).send(err);
+    if (err)
+      return res.status(500).json({ error: "Failed to fetch ingredients" });
     res.json(results);
   });
 });
@@ -78,8 +82,6 @@ app.post("/api/ingredients", (req, res) => {
         console.error("Error inserting ingredient:", err);
         return res.status(500).json({ error: "Failed to insert ingredient" });
       }
-
-      // Ensure the response is JSON
       res
         .status(201)
         .json({ message: "Ingredient added", id: result.insertId });
@@ -87,15 +89,20 @@ app.post("/api/ingredients", (req, res) => {
   );
 });
 
+// ===== Stock Ingredient Routes =====
+
+// Fetch all stock ingredients
 app.get("/api/stockingredients", (req, res) => {
   db.query("SELECT * FROM stockingredients", (err, results) => {
-    if (err) {
-      return res.status(500).send("Error fetching data from database");
-    }
+    if (err)
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch stock ingredients" });
     res.json(results);
   });
 });
 
+// Add new stock ingredient
 app.post("/api/stockingredients", (req, res) => {
   const {
     IngredientsID,
@@ -108,10 +115,16 @@ app.post("/api/stockingredients", (req, res) => {
     Unit_Price,
   } = req.body;
 
+  // Validate required fields
+  if (!IngredientsID || !Container || !Quantity) {
+    return res.status(400).json({ error: "Required fields missing" });
+  }
+
   const query = `
-      INSERT INTO stockingredients (IngredientsID, Container, Quantity, Container_Size, Container_Price, Total_Quantity, Total_Price, Unit_Price)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+    INSERT INTO stockingredients 
+    (IngredientsID, Container, Quantity, Container_Size, Container_Price, Total_Quantity, Total_Price, Unit_Price)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
 
   db.query(
     query,
@@ -127,22 +140,52 @@ app.post("/api/stockingredients", (req, res) => {
     ],
     (err, result) => {
       if (err) {
-        return res.status(500).send("Error inserting data into database");
+        console.error("Error inserting stock ingredient:", err);
+        return res
+          .status(500)
+          .json({ error: "Failed to insert stock ingredient" });
       }
-      res.status(201).send("Stock item added successfully");
+      res.status(201).json({
+        message: "Stock item added successfully",
+        id: result.insertId,
+      });
     }
   );
 });
 
+// ===== Menu Item Routes =====
+
+// Fetch all menu items
 app.get("/api/menuitems", (req, res) => {
   db.query("SELECT * FROM menuitems", (err, results) => {
-    if (err) {
-      return res.status(500).send("Error fetching data from database");
-    }
+    if (err)
+      return res.status(500).json({ error: "Failed to fetch menu items" });
     res.json(results);
   });
 });
 
+// Add new menu item
+app.post("/api/menuitems", (req, res) => {
+  const { Menu, SellingPrice } = req.body;
+
+  // Fixed incorrect validation - was checking for ingredient fields
+  if (!Menu || !SellingPrice) {
+    return res
+      .status(400)
+      .json({ error: "Menu name and selling price are required" });
+  }
+
+  const sql = "INSERT INTO menuitems (Menu, SellingPrice) VALUES (?, ?)";
+  db.query(sql, [Menu, SellingPrice], (err, result) => {
+    if (err) {
+      console.error("Error inserting menu item:", err);
+      return res.status(500).json({ error: "Failed to insert menu item" });
+    }
+    res.status(201).json({ message: "Menu item added", id: result.insertId });
+  });
+});
+
+// Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

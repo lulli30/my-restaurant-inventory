@@ -15,7 +15,7 @@ function MenuItemsTable() {
   }, []);
 
   const fetchMenuItems = async () => {
-    const response = await fetch("/api/menu-items");
+    const response = await fetch("http://localhost:5000/api/menuitems");
     const data = await response.json();
     setMenuItems(data);
   };
@@ -24,7 +24,7 @@ function MenuItemsTable() {
     e.preventDefault();
     if (!newMenuItem.Menu || !newMenuItem.SellingPrice) return;
 
-    const response = await fetch("/api/menu-items", {
+    const response = await fetch("http://localhost:5000/api/menuitems", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newMenuItem),
