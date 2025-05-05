@@ -87,6 +87,62 @@ app.post("/api/ingredients", (req, res) => {
   );
 });
 
+app.get("/api/stockingredients", (req, res) => {
+  db.query("SELECT * FROM stockingredients", (err, results) => {
+    if (err) {
+      return res.status(500).send("Error fetching data from database");
+    }
+    res.json(results);
+  });
+});
+
+app.post("/api/stockingredients", (req, res) => {
+  const {
+    IngredientsID,
+    Container,
+    Quantity,
+    Container_Size,
+    Container_Price,
+    Total_Quantity,
+    Total_Price,
+    Unit_Price,
+  } = req.body;
+
+  const query = `
+      INSERT INTO stockingredients (IngredientsID, Container, Quantity, Container_Size, Container_Price, Total_Quantity, Total_Price, Unit_Price)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+  db.query(
+    query,
+    [
+      IngredientsID,
+      Container,
+      Quantity,
+      Container_Size,
+      Container_Price,
+      Total_Quantity,
+      Total_Price,
+      Unit_Price,
+    ],
+    (err, result) => {
+      if (err) {
+        return res.status(500).send("Error inserting data into database");
+      }
+      res.status(201).send("Stock item added successfully");
+    }
+  );
+});
+
+app.get("/api/menuitems", (req, res) => {
+  db.query("SELECT * FROM menuitems", (err, results) => {
+    if (err) {
+      return res.status(500).send("Error fetching data from database");
+    }
+    res.json(results);
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

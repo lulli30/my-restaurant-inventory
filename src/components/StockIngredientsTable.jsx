@@ -21,7 +21,7 @@ function StockIngredientsTable() {
   }, []);
 
   const fetchStock = async () => {
-    const response = await fetch("/api/stock-ingredients");
+    const response = await fetch("http://localhost:5000/api/stockingredients");
     const data = await response.json();
     setStock(data);
   };
@@ -30,7 +30,7 @@ function StockIngredientsTable() {
     e.preventDefault();
     if (!newStockItem.IngredientsID || !newStockItem.Quantity) return;
 
-    const response = await fetch("/api/stock-ingredients", {
+    const response = await fetch("http://localhost:5000/api/stockingredients", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newStockItem),
@@ -50,7 +50,9 @@ function StockIngredientsTable() {
       setShowModal(false);
       fetchStock(); // refresh list
     } else {
-      alert("Failed to add stock item.");
+      const errorText = await response.text(); // <-- get actual error
+      console.error("Server error:", errorText);
+      alert("Failed to add stock item.\n" + errorText); // show it in alert
     }
   };
 
@@ -78,15 +80,15 @@ function StockIngredientsTable() {
       <table className="min-w-full border border-gray-200 shadow-sm rounded overflow-hidden">
         <thead className="bg-gray-100">
           <tr>
-            <th className="px-4 py-2 text-left">StockID</th>
+            <th className="px-4 py-2 text-left">StockIngredientsID</th>
             <th className="px-4 py-2 text-left">IngredientsID</th>
             <th className="px-4 py-2 text-left">Container</th>
             <th className="px-4 py-2 text-left">Quantity</th>
-            <th className="px-4 py-2 text-left">Container Size</th>
-            <th className="px-4 py-2 text-left">Container Price</th>
-            <th className="px-4 py-2 text-left">Total Quantity</th>
-            <th className="px-4 py-2 text-left">Total Price</th>
-            <th className="px-4 py-2 text-left">Unit Price</th>
+            <th className="px-4 py-2 text-left">Container_Size</th>
+            <th className="px-4 py-2 text-left">Container_Price</th>
+            <th className="px-4 py-2 text-left">Total_Quantity</th>
+            <th className="px-4 py-2 text-left">Total_Price</th>
+            <th className="px-4 py-2 text-left">Unit_Price</th>
           </tr>
         </thead>
         <tbody>
