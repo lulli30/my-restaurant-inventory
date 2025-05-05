@@ -1,12 +1,82 @@
-# React + Vite
+# Restaurant Inventory Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a full-stack **Restaurant Inventory Management System** developed for a client as part of a freelancing project. The system allows restaurant staff or admins to efficiently manage ingredients and inventory stock in real time using a user-friendly dashboard.
 
-Currently, two official plugins are available:
+## Project Purpose
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This system was developed to help a restaurant streamline its inventory process by:
 
-## Expanding the ESLint configuration
+- Tracking stock levels of ingredients
+- Adding new stock entries
+- Viewing real-time inventory data
+- Connecting the frontend with a MySQL database via a custom backend API
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+
+**Frontend**:
+
+- React JS (JSX)
+- Tailwind CSS
+- Vite
+
+**Backend**:
+
+- Node.js
+- Express.js
+- MySQL
+
+**Database**:
+
+- MySQL
+
+## Features
+
+- View all stock ingredients
+- Add new stock items through a modal form
+- Connects with a MySQL database
+- Real-time updates after inserting new entries
+- Clean UI with Tailwind CSS
+- Navigation to and from dashboard
+
+## How to Run the Project Locally
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/my-restaurant-inventory.git
+cd my-restaurant-inventory
+```
+
+### 2. Setup MySQL Database
+
+- Import your SQL schema (sample provided in `/backend/schema.sql` or manually create a `stock_ingredients` table).
+- Configure database credentials in `backend/db.js`.
+
+### 3. Run the Backend
+
+```bash
+cd backend
+npm install
+node server.js
+```
+
+### 4. Run the Frontend
+
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
+
+## Author
+
+**John Andrew Borabo**
+Freelance Web Developer & Computer Science Student
+[johnandrewborabo44@gmail.com](mailto:johnandrewborabo44@gmail.com)
+[Portfolio](https://lulli-dev.vercel.app) | [GitHub](https://github.com/lulli30)
+
+---
+
+## Note
+
+This project was developed as a **freelancing project for a client** and showcases practical implementation of inventory features using a modern tech stack.
